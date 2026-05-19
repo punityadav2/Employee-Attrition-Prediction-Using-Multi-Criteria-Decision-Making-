@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Data
+*.csv
+*.xlsx
+*.pkl
+*.joblib
+
+# Models (except tracking)
+models/*.pkl
+models/*.joblib
+!models/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Reports
+*.pdf
+*.html
+outputs/
+ppt/
+paper/
+*.zip
