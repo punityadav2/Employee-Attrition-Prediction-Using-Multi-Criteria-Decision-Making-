@@ -72,6 +72,37 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 """, unsafe_allow_html=True)
 
 
+# ── Auto-run pipeline if artifacts are missing ───────────────────────────────
+def _artifacts_exist():
+    model_path = os.path.join(config.MODEL_DIR, 'best_model.pkl')
+    results_path = os.path.join(config.REPORTS_DIR, 'results.csv')
+    return os.path.exists(model_path) and os.path.exists(results_path)
+
+
+def _run_pipeline():
+    """Run main.py in-process so Streamlit Cloud can build artifacts on first boot."""
+    import subprocess
+    main_path = os.path.join(ROOT, 'main.py')
+    result = subprocess.run(
+        [sys.executable, main_path],
+        capture_output=True, text=True
+    )
+    return result.returncode == 0, result.stdout, result.stderr
+
+
+if not _artifacts_exist():
+    st.info("⚙️ **First-time setup detected.** Running the ML pipeline to build models and results. This takes ~8–12 minutes on first launch. Please wait…")
+    with st.spinner("Running pipeline (training 6 models with Optuna + MCDM ranking)…"):
+        success, stdout, stderr = _run_pipeline()
+    if success:
+        st.success("✅ Pipeline complete! Refreshing dashboard…")
+        st.rerun()
+    else:
+        st.error("❌ Pipeline failed. Check the error below.")
+        st.code(stderr[-3000:] if stderr else "No error output captured.")
+        st.stop()
+
+
 # ── Load artifacts ────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_artifacts():
@@ -91,6 +122,7 @@ def load_results():
     if os.path.exists(path):
         return pd.read_csv(path, index_col=0)
     return None
+
 
 
 def preprocess_input(df, encoders, scaler, top_features):

@@ -12,15 +12,14 @@ ENV/
 .ipynb_checkpoints
 *.ipynb_checkpoints/
 
-# Data
-*.csv
+# Data (raw only — keep processed outputs)
 *.xlsx
-*.pkl
-*.joblib
+# *.pkl  <-- ALLOW: needed for Streamlit Cloud deployment
+# *.csv  <-- ALLOW: results.csv needed for dashboard
 
-# Models (except tracking)
-models/*.pkl
-models/*.joblib
+# Models — ALLOW pkl so Streamlit Cloud can load them
+# models/*.pkl
+# models/*.joblib
 !models/.gitkeep
 
 # IDE
@@ -33,10 +32,8 @@ models/*.joblib
 .DS_Store
 Thumbs.db
 
-# Reports
-*.pdf
-*.html
-outputs/
+# Reports — allow outputs for Streamlit Cloud
+# outputs/
 ppt/
 paper/
 *.zip
